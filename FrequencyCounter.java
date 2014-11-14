@@ -1,4 +1,7 @@
+import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.LinkedList;
 
 import java.util.Arrays;
 
@@ -7,6 +10,21 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class FrequencyCounter {
+    /**
+     * Returns a list of the words with the highest frequency.
+     * @param text  The text to parse from.
+     * @param limit The maximum number of words to return in the list.
+     * @return      The list of limit words with the highest frequency, sorted highest to lowest frequency.
+     */
+    public List<String> topWords(String text, int limit) {
+        String[] words = getWords(text);
+        Map<String, Integer> wordCount = wordsToCountSet(words);
+        List<String>[] wordsArr = wordCountToArray(wordCount);
+        List<String> wordsList = countArrayToList(wordsArr, limit);
+
+        return wordsList;
+    }
+
     /**
      * Takes a piece of text and returns all the words inside it.
      * @param text The text to search through.
@@ -22,8 +40,13 @@ public class FrequencyCounter {
         return words;
     }
 
-    private HashMap<String, Integer> wordsToSet(String[] words) {
-        HashMap<String, Integer> wordCount = new HashMap<String, Integer>();
+    /**
+     * Given a list of strings, returns a hash table whose values are frequencies.
+     * @param words The array of strings to use as keys for hash table.
+     * @return      A hash table whose keys are words and whose values are frequencies.
+     */
+    private Map<String, Integer> wordsToCountSet(String[] words) {
+        Map<String, Integer> wordCount = new HashMap<String, Integer>();
 
         for (String word : words) {
             if (wordCount.containsKey(word))
@@ -35,13 +58,59 @@ public class FrequencyCounter {
         return wordCount;
     }
 
+    /**
+     * Helper method for count sort. Effectively switches key and value in hash table.
+     * @param wordCount The hash table to perform count sort on.
+     * @return          An array whose keys are frequencies and values are lists of words.
+     */
+    private List<String>[] wordCountToArray(Map<String, Integer> wordCount) {
+        // Find the max size of the array for count sort:
+        int maxFrequency = 0;
+        for (Integer value : wordCount.values()) {
+            if (value > maxFrequency)
+                maxFrequency = value;
+        }
+        // Actual count sort, using an array to keep track of strings:
+        List<String>[] wordsArr = new List[maxFrequency];
+        for (Map.Entry<String, Integer> entry : wordCount.entrySet()) {
+            int index = entry.getValue() - 1;
+            if (wordsArr[index] == null)
+                wordsArr[index] = new LinkedList<String>();
+            wordsArr[index].add(entry.getKey());
+        }
+
+        return wordsArr;
+    }
+
+    /**
+     * Returns a list of words sorted by frequency.
+     * @param wordsArr An array whose indices are frequencies and values are words.
+     * @param limit    The size of the return list.
+     * @return         A list of the first limit words.
+     */
+    private List<String> countArrayToList(List<String>[] wordsArr, int limit) {
+        List<String> words = new LinkedList<String>();
+
+        // Iterate backwards, since top frequencies are at the end.
+        for (int i = wordsArr.length - 1; i >= 0 && limit > 0; i--) {
+            if (wordsArr[i] != null) {
+                for (String word : wordsArr[i]) {
+                    words.add(word);
+                    limit--;
+                }
+            }
+        }
+
+        return words;
+    }
+
     public static void main(String[] args) {
         // Grab test input file:
-        String testInput = "";
+        String testInput = "", fileName = "test.txt";
         BufferedReader br = null;
         try {
             String currentLine;
-            br = new BufferedReader(new FileReader("test.txt"));
+            br = new BufferedReader(new FileReader(fileName));
             while ((currentLine = br.readLine()) != null)
                 testInput += " " + currentLine;
             br.close();
@@ -50,10 +119,8 @@ public class FrequencyCounter {
         }
 
         FrequencyCounter frequencyCounter = new FrequencyCounter();
-        String[] words = frequencyCounter.getWords(testInput);
-        HashMap<String, Integer> wordCount = frequencyCounter.wordsToSet(words);
+        List<String> wordsList = frequencyCounter.topWords(testInput, 500);
 
-        // System.out.println(Arrays.toString(words));
-        System.out.println(wordCount.toString());
+        System.out.println(wordsList.toString());
     }
 }
