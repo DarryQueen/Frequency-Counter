@@ -3,12 +3,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.LinkedList;
 
-import java.util.Arrays;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-
 public class FrequencyCounter {
     /**
      * Returns a list of the words with the highest frequency.
@@ -92,25 +86,5 @@ public class FrequencyCounter {
         }
 
         return words;
-    }
-
-    public static void main(String[] args) {
-        // Grab test input file:
-        String testInput = "", fileName = "test.txt";
-        BufferedReader br = null;
-        try {
-            String currentLine;
-            br = new BufferedReader(new FileReader(fileName));
-            while ((currentLine = br.readLine()) != null)
-                testInput += " " + currentLine;
-            br.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        FrequencyCounter frequencyCounter = new FrequencyCounter();
-        List<String> wordsList = frequencyCounter.topWords(testInput, 500);
-
-        System.out.println(wordsList.toString());
     }
 }
