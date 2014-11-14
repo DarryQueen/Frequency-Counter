@@ -19,8 +19,7 @@ public class FrequencyCounter {
     public List<String> topWords(String text, int limit) {
         String[] words = getWords(text);
         Map<String, Integer> wordCount = wordsToCountSet(words);
-        List<String>[] wordsArr = wordCountToArray(wordCount);
-        List<String> wordsList = countArrayToList(wordsArr, limit);
+        List<String> wordsList = wordCountToList(wordCount, limit);
 
         return wordsList;
     }
@@ -63,7 +62,7 @@ public class FrequencyCounter {
      * @param wordCount The hash table to perform count sort on.
      * @return          An array whose keys are frequencies and values are lists of words.
      */
-    private List<String>[] wordCountToArray(Map<String, Integer> wordCount) {
+    private List<String> wordCountToList(Map<String, Integer> wordCount, int limit) {
         // Find the max size of the array for count sort:
         int maxFrequency = 0;
         for (Integer value : wordCount.values()) {
@@ -79,16 +78,6 @@ public class FrequencyCounter {
             wordsArr[index].add(entry.getKey());
         }
 
-        return wordsArr;
-    }
-
-    /**
-     * Returns a list of words sorted by frequency.
-     * @param wordsArr An array whose indices are frequencies and values are words.
-     * @param limit    The size of the return list.
-     * @return         A list of the first limit words.
-     */
-    private List<String> countArrayToList(List<String>[] wordsArr, int limit) {
         List<String> words = new LinkedList<String>();
 
         // Iterate backwards, since top frequencies are at the end.
