@@ -60,7 +60,8 @@ public class FrequencyCounter {
     /**
      * Helper method for count sort. Effectively switches key and value in hash table.
      * @param wordCount The hash table to perform count sort on.
-     * @return          An array whose keys are frequencies and values are lists of words.
+     * @param limit     The number of words to return.
+     * @return          A list of words sorted by highest to lowest frequency.
      */
     private List<String> wordCountToList(Map<String, Integer> wordCount, int limit) {
         // Find the max size of the array for count sort:
